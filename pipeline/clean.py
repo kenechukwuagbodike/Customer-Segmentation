@@ -23,7 +23,7 @@ COLUMN_MAP = {
     "Price": "UnitPrice",
 }
 
-# These StockCodes aren't real products — they're administrative entries
+# These StockCodes aren't real products, they're administrative entries
 # (manual adjustments, postage, carriage, bank charges, etc). Left in, they
 # skew monetary totals and pollute "top products" with non-product rows.
 ADMIN_STOCK_CODES = {"POST", "D", "M", "BANK CHARGES", "C2", "DOT", "PADS", "S", "AMAZONFEE", "CRUK"}
@@ -32,7 +32,7 @@ ADMIN_STOCK_CODES = {"POST", "D", "M", "BANK CHARGES", "C2", "DOT", "PADS", "S",
 def load_raw() -> pd.DataFrame:
     # Both year-sheets are loaded and stacked into one DataFrame.
     # dtype arg stops pandas reading CustomerID as 12345.0 instead of '12345'.
-    log.info("Loading %s — two sheets, ~1M rows (allow ~60 seconds)…", RAW_FILE.name)
+    log.info("Loading %s: two sheets, ~1M rows (allow ~60 seconds)...", RAW_FILE.name)
     sheets = pd.read_excel(RAW_FILE, sheet_name=None, dtype={"Customer ID": str})
     df = pd.concat(sheets.values(), ignore_index=True)
     log.info("Loaded %d rows across %d sheets", len(df), len(sheets))
@@ -53,17 +53,17 @@ def clean(df: pd.DataFrame) -> pd.DataFrame:
     df = df[~df["InvoiceNo"].astype(str).str.startswith("C")]
     log.info("Dropped %d cancellation rows → %d remaining", before - len(df), len(df))
 
-    # Negative quantity = return, zero/negative price = data error — drop both
+    # Negative quantity = return, zero/negative price = data error, drop both
     before = len(df)
     df = df[(df["Quantity"] >= 1) & (df["UnitPrice"] > 0)]
     log.info("Dropped %d return/error rows → %d remaining", before - len(df), len(df))
 
-    # Dataset is ~90% UK — keeping just UK gives us a clean, focused sample
+    # Dataset is ~90% UK, keeping just UK gives us a clean, focused sample
     before = len(df)
     df = df[df["Country"] == "United Kingdom"]
     log.info("Dropped %d non-UK rows → %d remaining", before - len(df), len(df))
 
-    # Strip out admin entries (Manual, Postage, Carriage, etc.) — not real purchases
+    # Strip out admin entries (Manual, Postage, Carriage, etc.), not real purchases
     before = len(df)
     df = df[~df["StockCode"].astype(str).str.upper().isin(ADMIN_STOCK_CODES)]
     log.info("Dropped %d admin/non-product rows → %d remaining", before - len(df), len(df))

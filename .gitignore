@@ -13,9 +13,9 @@ build/
 .env
 *.env
 
-# Raw + intermediate data — large, regenerate locally via the pipeline scripts.
+# Raw + intermediate data: large, regenerate locally via the pipeline scripts.
 # Small derived files (segments.csv, segment_profiles.csv, elbow_data.csv,
-# segment_products.csv) are NOT excluded — the deployed Streamlit app reads
+# segment_products.csv) are NOT excluded. The deployed Streamlit app reads
 # them directly and Streamlit Cloud never runs the pipeline itself.
 data/online_retail_II.xlsx
 data/clean.csv
@@ -24,7 +24,7 @@ data/*.parquet
 data/*.db
 *.db
 
-# models/*.pkl and models/*.joblib are committed on purpose — same reason
+# models/*.pkl and models/*.joblib are committed on purpose, same reason
 # as above, the dashboard needs them and there's no build step to regenerate them
 
 # Logs

@@ -58,7 +58,7 @@ def score_rfm(rfm: pd.DataFrame) -> pd.DataFrame:
         rfm["frequency"].rank(method="first"), q=5, labels=[1, 2, 3, 4, 5]
     ).astype(int)
 
-    # Monetary: straightforward quintile — higher spend = higher score
+    # Monetary: straightforward quintile, higher spend = higher score
     rfm["m_score"] = pd.qcut(
         rfm["monetary"], q=5, labels=[1, 2, 3, 4, 5], duplicates="drop"
     ).astype(int)

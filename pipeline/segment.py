@@ -37,7 +37,7 @@ def scale_features(rfm: pd.DataFrame):
     scaler = StandardScaler()
     X = scaler.fit_transform(rfm[FEATURES])
     joblib.dump(scaler, MODELS_DIR / "scaler.pkl")
-    log.info("Features scaled with StandardScaler — scaler saved")
+    log.info("Features scaled with StandardScaler, scaler saved")
     return X, scaler
 
 
@@ -108,7 +108,7 @@ def assign_labels(rfm: pd.DataFrame) -> pd.DataFrame:
 
 
 def build_profiles(rfm: pd.DataFrame) -> pd.DataFrame:
-    # One summary row per segment — used by the dashboard's summary table
+    # One summary row per segment, used by the dashboard's summary table
     total_revenue = rfm["monetary"].sum()
     profiles = (
         rfm.groupby("segment")
@@ -140,7 +140,7 @@ def build_profiles(rfm: pd.DataFrame) -> pd.DataFrame:
 def build_top_products(rfm: pd.DataFrame, top_n: int = 15) -> pd.DataFrame:
     # Join segment labels onto transaction-level data once, here in the pipeline,
     # rather than in the dashboard. This keeps the deployed app from needing the
-    # full 67MB clean.csv — it only ever reads this small aggregated file.
+    # full 67MB clean.csv, it only ever reads this small aggregated file.
     log.info("Loading clean.csv to compute top products per segment…")
     txns = pd.read_csv(DATA_DIR / "clean.csv", usecols=["CustomerID", "Description", "TotalValue"])
 

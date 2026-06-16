@@ -2,9 +2,9 @@
 
 Built this to answer a question marketing teams always struggle with: *which customers actually matter, and what should we do differently for each of them?*
 
-Most businesses treat their entire customer base the same way — same email, same discount, same messaging. This project uses RFM analysis and KMeans clustering on real transaction data to show exactly why that's a mistake.
+Most businesses treat their entire customer base the same way: same email, same discount, same messaging. This project uses RFM analysis and KMeans clustering on real transaction data to show exactly why that's a mistake.
 
-**Live demo:** _link coming soon_
+**Live demo:** [keni-customer-segmentation.streamlit.app](https://keni-customer-segmentation.streamlit.app/)
 
 ---
 
@@ -12,9 +12,9 @@ Most businesses treat their entire customer base the same way — same email, sa
 
 Running this on the UCI Online Retail II dataset (~1M UK transactions, 2009–2011):
 
-- **800 customers (15% of the base) were responsible for 68% of total revenue** — the Champions segment
-- The Lost segment (1,006 customers) contributed just 1.7% of revenue despite being nearly 19% of the base
-- At-Risk customers had strong historical spend but hadn't purchased in months — a clear win-back opportunity
+- **801 customers (15% of the base) were responsible for 68% of total revenue**, the Champions segment
+- The Lost segment (1,011 customers) contributed just 1.7% of revenue despite being nearly 19% of the base
+- At-Risk customers had strong historical spend but hadn't purchased in months, a clear win-back opportunity
 
 These aren't insights you'd find by looking at aggregate revenue numbers. You need to segment first.
 
@@ -22,9 +22,9 @@ These aren't insights you'd find by looking at aggregate revenue numbers. You ne
 
 Three pipeline steps, then a Streamlit dashboard:
 
-1. **clean.py** — strips out cancellations, returns, null customer IDs, and non-UK transactions from the raw Excel file
-2. **rfm.py** — calculates Recency (days since last purchase), Frequency (number of orders), and Monetary value (total spend) per customer, then scores each dimension 1–5 using quintile binning
-3. **segment.py** — applies StandardScaler and KMeans (k=5, validated with elbow + silhouette analysis) to group customers into Champions, Loyal, At-Risk, New Customers, and Lost
+1. **clean.py**: strips out cancellations, returns, null customer IDs, admin charges, and non-UK transactions from the raw Excel file
+2. **rfm.py**: calculates Recency (days since last purchase), Frequency (number of orders), and Monetary value (total spend) per customer, then scores each dimension 1-5 using quintile binning
+3. **segment.py**: applies StandardScaler and KMeans (k=5, validated with elbow + silhouette analysis) to group customers into Champions, Loyal, At-Risk, New Customers, and Lost
 
 The dashboard lets you explore each segment's profile, see their top products, and review the recommended action for each group.
 
@@ -76,7 +76,7 @@ customer-segmentation/
 
 ---
 
-**Kene Agbodike** — Data & AI Decision Systems Consultant
+**Kene Agbodike**, Data & AI Decision Systems Consultant
 
 Microsoft Fabric Data Engineer · Fabric Analytics Engineer · Azure Solutions Architect · Azure AI Engineer · Azure Data Scientist
 

@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).parents[1]
 DATA_DIR = BASE_DIR / "data"
 
 # ---------------------------------------------------------------------------
-# Colour palette — one colour per segment, used consistently across all charts
+# Colour palette: one colour per segment, used consistently across all charts
 # ---------------------------------------------------------------------------
 COLORS = {
     "Champions": "#2196F3",      # blue
@@ -30,15 +30,15 @@ COLORS = {
     "Lost": "#F44336",           # red
 }
 
-# Rules-based recommendations — one per segment
+# Rules-based recommendations, one per segment
 RECOMMENDATIONS = {
     "Champions": (
         "🏆 **Protect and reward.** These customers generate the bulk of your revenue. "
         "Give them VIP early access, referral bonuses, and exclusive bundles. "
-        "Any churn here hurts disproportionately — make them feel seen."
+        "Any churn here hurts disproportionately, so make them feel seen."
     ),
     "Loyal": (
-        "💚 **Upsell and nudge upward.** High frequency, solid spend — they're one "
+        "💚 **Upsell and nudge upward.** High frequency, solid spend, they're one "
         "great experience away from Champion status. Introduce bundle deals, "
         "purchase milestone rewards, and personalised cross-sell recommendations."
     ),
@@ -54,13 +54,13 @@ RECOMMENDATIONS = {
     ),
     "Lost": (
         "❄️ **One last shot, then retire.** Try a single high-value reactivation "
-        "email. If there's no response, remove from active campaigns — continued "
+        "email. If there's no response, remove from active campaigns: continued "
         "outreach hurts deliverability and wastes budget."
     ),
 }
 
 # ---------------------------------------------------------------------------
-# Data loading — cached so Streamlit doesn't reload on every interaction
+# Data loading, cached so Streamlit doesn't reload on every interaction
 # ---------------------------------------------------------------------------
 @st.cache_data
 def load_segments():
@@ -76,7 +76,7 @@ def load_elbow():
 
 @st.cache_data
 def load_top_products():
-    # Pre-aggregated per segment by pipeline/segment.py — avoids shipping the
+    # Pre-aggregated per segment by pipeline/segment.py, avoids shipping the
     # full transaction log to the deployed app.
     return pd.read_csv(DATA_DIR / "segment_products.csv")
 
@@ -86,7 +86,7 @@ elbow_df = load_elbow()
 top_products_all = load_top_products()
 
 # ---------------------------------------------------------------------------
-# Sidebar — segment filter (applies to scatter + deep-dive)
+# Sidebar: segment filter (applies to scatter + deep-dive)
 # ---------------------------------------------------------------------------
 st.sidebar.image(
     "https://img.icons8.com/fluency/96/customer-insight.png", width=60
@@ -116,7 +116,7 @@ seg_filtered = segments[segments["segment"].isin(selected_segments)]
 prof_filtered = profiles[profiles["segment"].isin(selected_segments)]
 
 # ---------------------------------------------------------------------------
-# KPI row — headline numbers across the top
+# KPI row: headline numbers across the top
 # ---------------------------------------------------------------------------
 st.title("🧊 Customer Segmentation Dashboard")
 st.caption(
@@ -147,7 +147,7 @@ st.divider()
 # ---------------------------------------------------------------------------
 tab1, tab2, tab3 = st.tabs(["📊 Segment Overview", "🔍 Deep Dive", "📐 Model Validation"])
 
-# ===========================  TAB 1 — OVERVIEW  ============================
+# ===========================  TAB 1 - OVERVIEW  ============================
 with tab1:
     col_scatter, col_table = st.columns([3, 2], gap="large")
 
@@ -155,7 +155,7 @@ with tab1:
         st.subheader("Recency vs Monetary by segment")
         st.caption(
             "Each dot is a customer. Segments in the top-left bought recently and spent the most. "
-            "Note the log scale on spend — the range spans £3 to £608K."
+            "Note the log scale on spend: the range spans £3 to £608K."
         )
 
         fig_scatter = px.scatter(
@@ -225,7 +225,7 @@ with tab1:
         )
         st.plotly_chart(fig_bar, width="stretch")
 
-# ===========================  TAB 2 — DEEP DIVE  ===========================
+# ===========================  TAB 2 - DEEP DIVE  ===========================
 with tab2:
     chosen = st.selectbox(
         "Select a segment to explore",
@@ -249,9 +249,9 @@ with tab2:
     col_products, col_hist = st.columns(2, gap="large")
 
     with col_products:
-        st.subheader(f"Top 10 products — {chosen}")
+        st.subheader(f"Top 10 products: {chosen}")
 
-        # Pre-aggregated per segment by the pipeline — just filter and take top 10
+        # Pre-aggregated per segment by the pipeline, just filter and take top 10
         top_products = (
             top_products_all[top_products_all["segment"] == chosen]
             .sort_values("TotalValue", ascending=False)
@@ -281,7 +281,7 @@ with tab2:
         st.plotly_chart(fig_products, width="stretch")
 
     with col_hist:
-        st.subheader(f"Purchase frequency distribution — {chosen}")
+        st.subheader(f"Purchase frequency distribution: {chosen}")
         st.caption("How many orders did customers in this segment place?")
 
         # Compute bins manually so we can suppress "0" labels on empty bars
@@ -310,7 +310,7 @@ with tab2:
         )
         st.plotly_chart(fig_hist, width="stretch")
 
-# ========================  TAB 3 — MODEL VALIDATION  ======================
+# ========================  TAB 3 - MODEL VALIDATION  ======================
 with tab3:
     st.subheader("How we chose k = 5 clusters")
     st.caption(
@@ -322,7 +322,7 @@ with tab3:
     col_elbow, col_sil = st.columns(2, gap="large")
 
     with col_elbow:
-        st.markdown("**Elbow method — inertia vs k**")
+        st.markdown("**Elbow method: inertia vs k**")
         fig_elbow, ax = plt.subplots(figsize=(5, 3))
         ax.plot(elbow_df["k"], elbow_df["inertia"], marker="o", color="#2196F3", linewidth=2)
         ax.axvline(x=5, color="#FF9800", linestyle="--", linewidth=1.5, label="k=5 chosen")
