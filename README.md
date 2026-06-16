@@ -8,6 +8,24 @@ Most businesses treat their entire customer base the same way: same email, same 
 
 ---
 
+## Live dashboard
+
+**→ [View on Streamlit Cloud](https://keni-customer-segmentation.streamlit.app/)**
+
+![Customer Segmentation Dashboard](samples/dashboard-screenshot.png)
+
+Use the sidebar to filter by segment. The scatter plot, segment table, and revenue chart all update in real time.
+
+---
+
+## Sample outputs
+
+| Output | Description |
+|--------|-------------|
+| [Project case study](samples/customer-segmentation-case-study.pdf) | Full write-up: the business problem, what each segment means, how the dashboard supports decisions, and technical architecture |
+
+---
+
 ## What I found
 
 Running this on the UCI Online Retail II dataset (~1M UK transactions, 2009–2011):
@@ -71,6 +89,12 @@ customer-segmentation/
 ├── dashboard/
 │   └── app.py
 ├── models/         Saved KMeans + scaler .pkl files
+├── documentation/
+│   └── scripts/
+│       └── generate_case_study.py   Regenerates the case study PDF
+├── samples/
+│   ├── dashboard-screenshot.png             Live dashboard screenshot
+│   └── customer-segmentation-case-study.pdf Case study (visible on GitHub)
 └── requirements.txt
 ```
 
