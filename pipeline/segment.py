@@ -137,6 +137,30 @@ def build_profiles(rfm: pd.DataFrame) -> pd.DataFrame:
     return profiles
 
 
+def build_top_products(rfm: pd.DataFrame, top_n: int = 15) -> pd.DataFrame:
+    # Join segment labels onto transaction-level data once, here in the pipeline,
+    # rather than in the dashboard. This keeps the deployed app from needing the
+    # full 67MB clean.csv — it only ever reads this small aggregated file.
+    log.info("Loading clean.csv to compute top products per segment…")
+    txns = pd.read_csv(DATA_DIR / "clean.csv", usecols=["CustomerID", "Description", "TotalValue"])
+
+    merged = txns.merge(rfm[["CustomerID", "segment"]], on="CustomerID", how="inner")
+
+    top_products = (
+        merged.groupby(["segment", "Description"])["TotalValue"]
+        .sum()
+        .reset_index()
+        .sort_values(["segment", "TotalValue"], ascending=[True, False])
+        .groupby("segment")
+        .head(top_n)
+        .reset_index(drop=True)
+    )
+
+    top_products.to_csv(DATA_DIR / "segment_products.csv", index=False)
+    log.info("Top products per segment saved → data/segment_products.csv (%d rows)", len(top_products))
+    return top_products
+
+
 def main() -> None:
     log.info("Loading %s…", RFM_FILE.name)
     rfm = pd.read_csv(RFM_FILE)
@@ -154,6 +178,7 @@ def main() -> None:
 
     rfm = assign_labels(rfm)
     build_profiles(rfm)
+    build_top_products(rfm)
 
     rfm.to_csv(DATA_DIR / "segments.csv", index=False)
     log.info("Customer segments saved → data/segments.csv  (%d rows)", len(rfm))

@@ -75,14 +75,15 @@ def load_elbow():
     return pd.read_csv(DATA_DIR / "elbow_data.csv")
 
 @st.cache_data
-def load_transactions():
-    # Only load the columns we need for top-products analysis
-    return pd.read_csv(DATA_DIR / "clean.csv", usecols=["CustomerID", "Description", "TotalValue"])
+def load_top_products():
+    # Pre-aggregated per segment by pipeline/segment.py — avoids shipping the
+    # full transaction log to the deployed app.
+    return pd.read_csv(DATA_DIR / "segment_products.csv")
 
 segments = load_segments()
 profiles = load_profiles()
 elbow_df = load_elbow()
-transactions = load_transactions()
+top_products_all = load_top_products()
 
 # ---------------------------------------------------------------------------
 # Sidebar — segment filter (applies to scatter + deep-dive)
@@ -250,15 +251,11 @@ with tab2:
     with col_products:
         st.subheader(f"Top 10 products — {chosen}")
 
-        # Join segment customers back to transaction-level data
-        customer_ids = seg_data["CustomerID"].tolist()
+        # Pre-aggregated per segment by the pipeline — just filter and take top 10
         top_products = (
-            transactions[transactions["CustomerID"].isin(customer_ids)]
-            .groupby("Description")["TotalValue"]
-            .sum()
-            .sort_values(ascending=False)
-            .head(10)
-            .reset_index()
+            top_products_all[top_products_all["segment"] == chosen]
+            .sort_values("TotalValue", ascending=False)
+            .head(10)[["Description", "TotalValue"]]
         )
         top_products.columns = ["Product", "Revenue £"]
 

@@ -23,6 +23,11 @@ COLUMN_MAP = {
     "Price": "UnitPrice",
 }
 
+# These StockCodes aren't real products — they're administrative entries
+# (manual adjustments, postage, carriage, bank charges, etc). Left in, they
+# skew monetary totals and pollute "top products" with non-product rows.
+ADMIN_STOCK_CODES = {"POST", "D", "M", "BANK CHARGES", "C2", "DOT", "PADS", "S", "AMAZONFEE", "CRUK"}
+
 
 def load_raw() -> pd.DataFrame:
     # Both year-sheets are loaded and stacked into one DataFrame.
@@ -57,6 +62,11 @@ def clean(df: pd.DataFrame) -> pd.DataFrame:
     before = len(df)
     df = df[df["Country"] == "United Kingdom"]
     log.info("Dropped %d non-UK rows → %d remaining", before - len(df), len(df))
+
+    # Strip out admin entries (Manual, Postage, Carriage, etc.) — not real purchases
+    before = len(df)
+    df = df[~df["StockCode"].astype(str).str.upper().isin(ADMIN_STOCK_CODES)]
+    log.info("Dropped %d admin/non-product rows → %d remaining", before - len(df), len(df))
 
     df["TotalValue"] = df["Quantity"] * df["UnitPrice"]
     df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"])
